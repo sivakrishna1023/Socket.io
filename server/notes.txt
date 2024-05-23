@@ -1,1 +1,5 @@
 Nodemon for start the server when the change's hapening
+
+install Material UI :- npm install @mui/material @emotion/react @emotion/styled
+install Material UI Icons :- npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
+install React Router dom:- npm i react-router-dom 
