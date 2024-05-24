@@ -4,6 +4,10 @@ const dotenv=require("dotenv")
 const cors=require('cors')
 const app=express();
 dotenv.config();
+const connectDB=require('./config/db')
+const userRoutes=require('./Routes/UserRoutes')
+const {notFound}=require("./middleware/errorMiddleware")
+const {errorHandler}=require("./middleware/errorMiddleware")
 
 app.use(cors({
     origin: [
@@ -14,7 +18,11 @@ app.use(cors({
     credentials: true,
 }))
 
-app.get("/api",(req,res)=>{
+app.use("/api/user",userRoutes);
+app.use(express.json());
+
+
+app.get("/",(req,res)=>{
     res.send("I am alive");
 })
 app.get("/api/chat",(req,res)=>{
@@ -25,5 +33,7 @@ app.get("/api/chat/:id",(req,res)=>{
     const singlechat=chats.find((c)=>c._id===req.params.id);
     res.send(singlechat);
 })
-
+app.use(notFound)
+app.use(errorHandler)
+connectDB();
 app.listen(process.env.PORT,console.log(`listening in port ${process.env.PORT}`))

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 
 const LogIn = () => {
     const [isLoading,setisLoading]=useState(false);
-   
+    const [email,setEmail]=useState("");
+    const [password,setPassword]=useState("");
     const handleLogin = ()=>{
     
     }
@@ -47,8 +48,8 @@ const LogIn = () => {
                     label="Email"
                     margin="normal"
                     variant="outlined"
-                  
-                  
+                    value={email}
+                    onChange={(e)=>setEmail(e.target.value)}
                   />
 
                   <TextField
@@ -58,7 +59,8 @@ const LogIn = () => {
                     type="password"
                     margin="normal"
                     variant="outlined"
-                    
+                    value={password}
+                    onChange={(e)=>setPassword(e.target.value)}
                   />
 
                   <Button

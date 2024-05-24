@@ -7,6 +7,11 @@ import { Link } from 'react-router-dom';
 
 const SignUp = () => {
     const [isLoading,setisLoading]=useState(false);
+    const [name,setName]=useState("");
+    const [email,setEmail]=useState("");
+    const [password,setPassword]=useState("");
+    const [confirmPassword,setConfirmPassword]=useState("");
+    const [avatar,setAvatar]=useState(null);
     const handleSignUp=()=>{
        console.log("clicked")
     }
@@ -102,7 +107,8 @@ const SignUp = () => {
                   label="Name"
                   margin="normal"
                   variant="outlined"
-                 
+                  value={name}
+                  onChange={(e)=>setName(e.target.value)}
                 />
 
                 <TextField
@@ -111,7 +117,8 @@ const SignUp = () => {
                   label="Email"
                   margin="normal"
                   variant="outlined"
-                  
+                  value={email}
+                  onChange={(e)=>setEmail(e.target.value)}
                 />
                 <TextField
                   required
@@ -119,7 +126,8 @@ const SignUp = () => {
                   label="Password"
                   margin="normal"
                   variant="outlined"
-                  
+                  value={password}
+                  onChange={(e)=>setPassword(e.target.value)}
                 />
 
                 {/* {username.error && (
@@ -135,7 +143,8 @@ const SignUp = () => {
                   type="password"
                   margin="normal"
                   variant="outlined"
-                 
+                  value={confirmPassword}
+                  onChange={(e)=>e.target.value}
                 />
 
                 <Button
