@@ -24,6 +24,7 @@ app.use(cors({
     origin: [
       "http://localhost:5173",
       "http://localhost:4173",
+      "https://socket-io-sooty-iota.vercel.app"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
@@ -33,7 +34,11 @@ app.use(cors({
 const server=createServer(app);
 const io=new Server(server,{
     cors:{
-        origin:"http://localhost:5173",
+        origin: [
+            "http://localhost:5173",
+            "http://localhost:4173",
+            "https://socket-io-sooty-iota.vercel.app"
+          ],
         methods:["GET","POST"],
         credentials:true,
     }
@@ -72,4 +77,7 @@ io.on("connection",(socket)=>{
 // })
 
 // connectDB();
+app.get("/",(req,res)=>{
+    res.send("working server");
+})
 server.listen(process.env.PORT,console.log(`listening in port ${process.env.PORT}`))

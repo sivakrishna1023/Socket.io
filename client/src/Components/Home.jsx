@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Container, Stack, TextField, Typography } from '@mui/material'
 import {io} from  'socket.io-client'
+import {server} from '../constants/config'
 const Home = () => {
-  const socket=useMemo(()=>io("http://localhost:3000"),[]);
+  console.log(server);
+  const socket=useMemo(()=>io(`${server}`),[]);
   const [socketID,setSocketID]=useState("");
   const [message,setMessage]=useState("");
   const [room,setRoom]=useState("");
