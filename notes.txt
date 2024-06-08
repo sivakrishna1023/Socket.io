@@ -4,3 +4,4 @@ install Material UI :- npm install @mui/material @emotion/react @emotion/styled
 install Material UI Icons :- npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
 install React Router dom:- npm i react-router-dom 
 
+npm i @cloudinary/url-gen @cloudinary/react

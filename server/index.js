@@ -6,8 +6,19 @@ const app=express();
 dotenv.config();
 const connectDB=require('./config/db')
 const userRoutes=require('./Routes/UserRoutes')
+const ChatRoutes=require('./Routes/ChatRoutes');
 const {notFound}=require("./middleware/errorMiddleware")
 const {errorHandler}=require("./middleware/errorMiddleware")
+const bodyParser = require("body-parser");
+const {Server}=require('socket.io')
+const {createServer}=require('http')
+
+
+app.use(express.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(notFound)
+// app.use(errorHandler)
 
 app.use(cors({
     origin: [
@@ -18,22 +29,47 @@ app.use(cors({
     credentials: true,
 }))
 
-app.use("/api/user",userRoutes);
-app.use(express.json());
 
+const server=createServer(app);
+const io=new Server(server,{
+    cors:{
+        origin:"http://localhost:5173",
+        methods:["GET","POST"],
+        credentials:true,
+    }
+});
 
-app.get("/",(req,res)=>{
-    res.send("I am alive");
-})
-app.get("/api/chat",(req,res)=>{
-    res.send(chats)
+io.on("connection",(socket)=>{
+    console.log("User connected" , socket.id);
+    socket.on("message",({message,room})=>{
+        console.log(message,room);
+        // io.emit("receive-message",data);
+        // socket.broadcast.emit("receive-message",data);
+        io.to(room).emit("receive-message",message)
+    })
+    socket.on("join-room",(room)=>{
+        socket.join(room);
+        console.log(`user Joined the room ${room}`);
+    })
+    // socket.on("disconnect",()=>{
+    //     console.log("user disconnected", socket.id);
+    //   })
+    // socket.emit("welcome",`Welcome message ${socket.id}`);
+    // socket.broadcast.emit("welcome",`${socket.id} Joined the server`);
 })
 
-app.get("/api/chat/:id",(req,res)=>{
-    const singlechat=chats.find((c)=>c._id===req.params.id);
-    res.send(singlechat);
-})
-app.use(notFound)
-app.use(errorHandler)
-connectDB();
-app.listen(process.env.PORT,console.log(`listening in port ${process.env.PORT}`))
+// app.use("/api/user",userRoutes);
+// app.use("/api/chat",ChatRoutes);
+// app.get("/",(req,res)=>{
+//     res.send("I am alive");
+// })
+// app.get("/api/chat",(req,res)=>{
+//     res.send(chats)
+// })
+// app.get("/api/chat/:id",(req,res)=>{
+//     const singlechat=chats.find((c)=>c._id===req.params.id);
+//     res.send(singlechat);
+// })
+
+// connectDB();
+server.listen(process.env.PORT,console.log(`listening in port ${process.env.PORT}`))

@@ -2,18 +2,79 @@ import React, { useState } from 'react'
 import {Typography,Stack,Avatar,IconButton,styled,TextField,Button,Container,Paper} from "@mui/material"
 import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import { Link } from 'react-router-dom';
-
+import { server } from '../constants/config';
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 const SignUp = () => {
+ 
     const [isLoading,setisLoading]=useState(false);
     const [name,setName]=useState("");
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
     const [confirmPassword,setConfirmPassword]=useState("");
-    const [avatar,setAvatar]=useState(null);
-    const handleSignUp=()=>{
-       console.log("clicked")
+    const [avatar,setAvatar]=useState("");
+    const uploadPic=(pics)=>{
+         if(pics===undefined){
+          toast.error("No Pic found for Avatar");
+          return;
+         }
+         console.log(pics);
+         if(pics.type==='image/jpeg' || pics.type==='image/png'){
+           const data=new FormData();
+           data.append('file',pics);
+           data.append("upload_preset",'sockets') 
+           data.append("cloud_name", "dugapub8i");
+        fetch("https://api.cloudinary.com/v1_1/dugapub8i/image/upload", {
+              method: "post",
+              body: data,
+        }).then((res) => res.json()).then((data) => {
+          setAvatar(data.url.toString());
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+         }else{
+          toast.error("Please Select an Image");
+          return; 
+         }
+    }
+    const handleSignUp=async(e)=>{
+       e.preventDefault();
+       if(!name || !email || !password || !confirmPassword){
+        toast.error('Please Enter all Details');
+        return;
+       }
+       if(password!==confirmPassword){
+        toast.error('Password Not Matched');
+        return;
+       }
+       setisLoading(true);
+       try{
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const {data}=await axios.post(`${server}/api/user`,
+          {
+            name:name, 
+            email:email, 
+            password:password,
+            pic:avatar
+          },
+          config
+        );
+         if(data){
+          window.location.href = '/chat';
+         }
+       }catch(error){
+          toast.error("Try again Later");
+          console.log(error);
+       }
+       setisLoading(false);
     }
     const VisuallyHiddenInput = styled("input")({
         border: 0,
@@ -27,6 +88,7 @@ const SignUp = () => {
         width: 1,
       });
   return ( <>
+  <Toaster />
    <Container
         component={"main"}
         maxWidth="xs"
@@ -63,7 +125,7 @@ const SignUp = () => {
                       height: "5rem",
                       objectFit: "contain",
                     }}
-                    // src={avatar.preview}
+                    src={avatar}
                   />
 
                   <IconButton
@@ -83,6 +145,8 @@ const SignUp = () => {
                       <CameraAltIcon sx={{ fontSize: 15 }}  />
                       <VisuallyHiddenInput
                         type="file"
+                        accept="image/*"
+                        onChange={(e) => uploadPic(e.target.files[0])}
                         // onChange={avatar.changeHandler}
                       />
                     </>
@@ -144,7 +208,7 @@ const SignUp = () => {
                   margin="normal"
                   variant="outlined"
                   value={confirmPassword}
-                  onChange={(e)=>e.target.value}
+                  onChange={(e)=>setConfirmPassword(e.target.value)}
                 />
 
                 <Button

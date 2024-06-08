@@ -1,5 +1,6 @@
 const asyncHandler=require("express-async-handler")
 const User=require("../models/UserModels")
+const generateToken=require("../config/generateToken")
 
 const allUsers=asyncHandler(async(req,res)=>{
     const keyword=req.query.search ? {
@@ -14,7 +15,6 @@ const allUsers=asyncHandler(async(req,res)=>{
 
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, pic } = req.body;
-  
     if (!name || !email || !password) {
       res.status(400);
       throw new Error("Please Enter all the Feilds");

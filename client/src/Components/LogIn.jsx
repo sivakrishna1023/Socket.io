@@ -1,15 +1,48 @@
 import React, { useState } from 'react'
 import {Container,Paper, Typography, TextField, Button} from "@mui/material"
 import { Link } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios';
+import { server } from '../constants/config';
 
 const LogIn = () => {
     const [isLoading,setisLoading]=useState(false);
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
-    const handleLogin = ()=>{
-    
+    const handleLogin = async (e)=>{
+      e.preventDefault();
+      console.log(email, password)
+      if(email==="" || password===""){
+         toast.error('Please Enter all Details')
+         return; 
+      }
+      setisLoading(true);
+      try{
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const {data}=await axios.post(`${server}/api/user/login`,
+          {
+            email:email, 
+            password:password,
+          },
+          config
+        );
+         if(data){
+          window.location.href = '/chat';
+         }
+      }catch(error){
+        console.log(error);
+      }
+      setisLoading(false)
+      console.log("clicked");
     }
-  return ( <div
+  return ( 
+    <>
+    <Toaster />
+    <div
       style={{
         backgroundColor: "",
       }}
@@ -102,6 +135,7 @@ const LogIn = () => {
         </Paper>
         </Container>
     </div>
+    </>
   )
 }
 
