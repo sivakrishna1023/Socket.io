@@ -44,8 +44,15 @@ const io=new Server(server,{
     }
 });
 
+
+const connectedSockets = [];
+const rooms = new Set(); 
+
 io.on("connection",(socket)=>{
-    console.log("User connected" , socket.id);
+    console.log("User connected", socket.id);
+    connectedSockets.push(socket.id);
+    io.emit("update-user-list", connectedSockets);
+
     socket.on("message",({message,room})=>{
         console.log(message,room);
         // io.emit("receive-message",data);
@@ -54,11 +61,18 @@ io.on("connection",(socket)=>{
     })
     socket.on("join-room",(room)=>{
         socket.join(room);
+        rooms.add(room);
+        io.emit("update-room-list", Array.from(rooms));
         console.log(`user Joined the room ${room}`);
     })
-    // socket.on("disconnect",()=>{
-    //     console.log("user disconnected", socket.id);
-    //   })
+    socket.on("disconnect",()=>{
+        console.log("user disconnected", socket.id);
+        const index = connectedSockets.indexOf(socket.id);
+        if (index !== -1) {
+            connectedSockets.splice(index, 1);
+        }
+        io.emit("update-user-list", connectedSockets);
+      })
     // socket.emit("welcome",`Welcome message ${socket.id}`);
     // socket.broadcast.emit("welcome",`${socket.id} Joined the server`);
 })
