@@ -3,9 +3,13 @@ import { Button, Container, Stack, TextField, Typography } from '@mui/material'
 import {io} from  'socket.io-client'
 import {server} from '../constants/config'
 import { blue } from '@mui/material/colors'
+import axios from 'axios'
 const Home = () => {
   console.log(server);
-  const socket=useMemo(()=>io(`${server}`),[]);
+  const socket = io(`${server}`, {
+    transports: ['polling']
+  });
+  // const socket=useMemo(()=>io(`${server}`),[]);
   const [socketID,setSocketID]=useState("");
   const [message,setMessage]=useState("");
   const [room,setRoom]=useState("");
@@ -25,8 +29,24 @@ const Home = () => {
           socket.off('update-user-list');
           socket.off('update-room-list');
       };
+      
   }, []);
-
+  const start=async()=>{
+    console.log("start");
+    try{
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const data=await axios.get(`${server}/`,
+        config
+      );
+      console.log(data);
+    }catch(error){
+      console.log(error);
+    }
+  }
   const handleRoomSubmit=(e)=>{
     e.preventDefault();
     socket.emit("join-room",roomName);
@@ -59,7 +79,7 @@ const Home = () => {
       flexDirection: 'column',
      }}>
         <Typography marginBottom={'1rem'}>
-          welCome to Socket.io
+          welCome to Socket.io  <Button onClick={start} type='submit' variant='Outlined'>start</Button>
         </Typography>
         <Typography marginBottom={'1rem'}>
           {socketID}
