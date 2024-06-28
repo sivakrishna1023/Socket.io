@@ -14,4 +14,4 @@ jobs:
             - name: Build docker image
               run: docker build -t sivakrishna1096/socket_server ./server
             - name: publish image to docker hub
-              run: docker push sivakrishna1096/soceket_server:latest 
+              run: docker push sivakrishna1096/socket_server:latest 
